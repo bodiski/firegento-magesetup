@@ -1,4 +1,7 @@
 <?php
+/**
+ * @loadFixture registry
+ */
 class FireGento_MageSetup_Test_Model_Setup_Agreements extends EcomDev_PHPUnit_Test_Case
 {
     protected $createdAgreementIds = [];
@@ -18,43 +21,37 @@ class FireGento_MageSetup_Test_Model_Setup_Agreements extends EcomDev_PHPUnit_Te
         $agreements->addFieldToFilter('agreement_id', ['in' => $this->createdAgreementIds]);
         $agreements->walk('delete');
     }
+
     /**
      * @dataProvider dataAgreementsParams
+     * @param $params
+     * @param $expectedAgreementNames
      */
-    public function testAgreementsAreCreated($params)
+    public function testAgreementsAreCreated($params, $expectedAgreementNames)
     {
         $setup = Mage::getSingleton('magesetup/setup');
         $setup->setup($params);
 
-        $this->assertAgreementsCreatedByName([
-            'AGB',
-            'Widerrufsbelehrung',
-            'Widerrufsbelehrung für Digitale Inhalte',
-            'Widerrufsbelehrung für Dienstleistungen'
-        ]);
-
-    }
-
-    /**
-     * @depends testAgreementsAreCreated
-     */
-    public function testAgreementsAreEnabled()
-    {
-        $this->resetConfig();
-        $this->assertTrue(
-            Mage::getStoreConfigFlag('checkout/options/enable_agreements'),
-            'Agreement configuration should be enabled'
-        );
+        $this->assertAgreementsCreatedByName($expectedAgreementNames);
+        $this->assertAgreementsAreEnabled();
     }
 
     public static function dataAgreementsParams()
     {
         return [
-            'de' => ['params' => [
-                'country' => 'de',
-                'cms_locale' => ['default' => 'de_DE'],
-                'agreements' => '1',
-            ]],
+            'de' => [
+                'params' => [
+                    'country' => 'de',
+                    'cms_locale' => ['default' => 'de_DE'],
+                    'agreements' => '1',
+                ],
+                'expected agreement names' => [
+                    'AGB',
+                    'Widerrufsbelehrung',
+                    'Widerrufsbelehrung für Digitale Inhalte',
+                    'Widerrufsbelehrung für Dienstleistungen'
+                ],
+            ],
         ];
     }
 
@@ -91,5 +88,14 @@ class FireGento_MageSetup_Test_Model_Setup_Agreements extends EcomDev_PHPUnit_Te
     protected function configFixture()
     {
         $this->setConfig('stores/default/checkout/options/enable_agreements', '0');
+    }
+
+    private function assertAgreementsAreEnabled()
+    {
+        $this->resetConfig();
+        $this->assertTrue(
+            Mage::getStoreConfigFlag('checkout/options/enable_agreements'),
+            'Agreement configuration should be enabled'
+        );
     }
 }

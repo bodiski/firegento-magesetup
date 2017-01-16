@@ -1,0 +1,15 @@
+registry:
+  registry:
+    - setup_country
+    - current_product
+    - current_category
+    - current_entity_key
+  helper: []
+  singleton:
+    - catalog/layer
+    - core/session
+    - customer/session
+    - catalog/session
+    - customer/session
+    - reports/session
+  resource: []
