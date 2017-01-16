@@ -1,6 +1,7 @@
 registry:
   registry:
     - setup_country
+    - product
     - current_product
     - current_category
     - current_entity_key
