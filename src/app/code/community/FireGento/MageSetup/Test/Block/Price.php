@@ -48,12 +48,26 @@ class FireGento_MageSetup_Test_Block_Price extends EcomDev_PHPUnit_Test_Case_Con
     {
         $defaultConfig = [
             'stores/default/catalog/price/display_block_below_price' => 1,
+            'stores/default/catalog/price/display_product_weight' => 1,
+            'stored/default/catalog/price/weight_unit' => 'kg',
             'stores/default/'.Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_DISPLAY_TYPE => Mage_Tax_Model_Config::DISPLAY_TYPE_BOTH
         ];
         $defaultSimpleProduct = [
+            'type_id' => 'simple',
             'can_show_price' => true,
-            'price' => 9.99
+            'price' => 10.0,
+            'tax_percent' => 19.0,
+            'weight' => 42,
+            'tax_class_id' => 1
         ];
+        $virtualProduct = [
+            'type_id' => 'virtual',
+            'weight' => 0,
+        ] + $defaultSimpleProduct;
+        $downloadableProduct = [
+            'type_id' => 'downloadable',
+            'weight' => 0,
+        ] + $defaultSimpleProduct;
         return [
             'not configured' => [
                 'config' => ['stores/default/catalog/price/display_block_below_price' => '0'] + $defaultConfig,
@@ -64,7 +78,9 @@ class FireGento_MageSetup_Test_Block_Price extends EcomDev_PHPUnit_Test_Case_Con
                 ],
                 'unexpected html' => [
                     'additional tax details container' => '<span class="tax-details">',
+                    'formatted tax rate' => '19%',
                     'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted shipping weight' => '42 kg',
                 ],
                 'expected event' => false,
             ],
@@ -77,7 +93,9 @@ class FireGento_MageSetup_Test_Block_Price extends EcomDev_PHPUnit_Test_Case_Con
                 ],
                 'unexpected html' => [
                     'additional tax details container' => '<span class="tax-details">',
+                    'formatted tax rate' => '19%',
                     'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted shipping weight' => '42 kg',
                 ],
                 'expected event' => false,
             ],
@@ -88,9 +106,11 @@ class FireGento_MageSetup_Test_Block_Price extends EcomDev_PHPUnit_Test_Case_Con
                 'expected html' => [
                     'default price template container' => '<div class="price-box">',
                     'additional tax details container' => '<span class="tax-details">',
+                    'formatted shipping weight' => '42 kg',
                 ],
                 'unexpected html' => [
                     'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted tax rate' => '19%',
                 ],
                 'expected event' => false,
             ],
@@ -101,9 +121,11 @@ class FireGento_MageSetup_Test_Block_Price extends EcomDev_PHPUnit_Test_Case_Con
                 'expected html' => [
                     'default price template container' => '<div class="price-box">',
                     'additional tax details container' => '<span class="tax-details">',
+                    'formatted tax rate' => '19%',
                 ],
                 'unexpected html' => [
                     'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted shipping weight' => '42 kg',
                 ],
                 'expected event' => true,
             ],
@@ -115,8 +137,70 @@ class FireGento_MageSetup_Test_Block_Price extends EcomDev_PHPUnit_Test_Case_Con
                     'default price template container' => '<div class="price-box">',
                     'additional tax details container' => '<span class="tax-details">',
                     'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted tax rate' => '19%',
+                    'formatted shipping weight' => '42 kg',
                 ],
                 'unexpected html' => [
+                ],
+                'expected event' => true,
+            ],
+            'simple product, excl tax, shipping' => [
+                'config' => ['stores/default/'.Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_DISPLAY_TYPE => Mage_Tax_Model_Config::DISPLAY_TYPE_EXCLUDING_TAX] + $defaultConfig,
+                'shipping url' => true,
+                'product' => $defaultSimpleProduct,
+                'expected html' => [
+                    'default price template container' => '<div class="price-box">',
+                    'additional tax details container' => '<span class="tax-details">',
+                    'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted tax rate' => '19%',
+                    'formatted shipping weight' => '42 kg',
+                ],
+                'unexpected html' => [
+                ],
+                'expected event' => true,
+            ],
+            'virtual product, incl tax, shipping' => [
+                'config' => ['stores/default/'.Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_DISPLAY_TYPE => Mage_Tax_Model_Config::DISPLAY_TYPE_INCLUDING_TAX] + $defaultConfig,
+                'shipping url' => true,
+                'product' => $virtualProduct,
+                'expected html' => [
+                    'default price template container' => '<div class="price-box">',
+                    'additional tax details container' => '<span class="tax-details">',
+                    'formatted tax rate' => '19%',
+                ],
+                'unexpected html' => [
+                    'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted shipping weight' => '0 kg',
+                ],
+                'expected event' => true,
+            ],
+            'downloadable product, incl tax, shipping' => [
+                'config' => ['stores/default/'.Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_DISPLAY_TYPE => Mage_Tax_Model_Config::DISPLAY_TYPE_INCLUDING_TAX] + $defaultConfig,
+                'shipping url' => true,
+                'product' => $downloadableProduct,
+                'expected html' => [
+                    'default price template container' => '<div class="price-box">',
+                    'additional tax details container' => '<span class="tax-details">',
+                    'formatted tax rate' => '19%',
+                ],
+                'unexpected html' => [
+                    'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted shipping weight' => '0 kg',
+                ],
+                'expected event' => true,
+            ],
+            'simple product, both, shipping, no weight' => [
+                'config' => ['stores/default/catalog/price/display_product_weight' => 0] + $defaultConfig,
+                'shipping url' => true,
+                'product' => $defaultSimpleProduct,
+                'expected html' => [
+                    'default price template container' => '<div class="price-box">',
+                    'additional tax details container' => '<span class="tax-details">',
+                ],
+                'unexpected html' => [
+                    'shipping cost details container' => '<span class="shipping-cost-details">',
+                    'formatted tax rate' => '19%',
+                    'formatted shipping weight' => '42 kg',
                 ],
                 'expected event' => true,
             ],
