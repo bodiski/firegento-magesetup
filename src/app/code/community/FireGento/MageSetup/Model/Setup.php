@@ -79,7 +79,8 @@ class FireGento_MageSetup_Model_Setup extends Mage_Core_Model_Abstract
             if (!is_array($params['cms_locale'])) {
                 $params['cms_locale'] = array('default' => $params['cms_locale']);
             }
-            Mage::getSingleton('magesetup/setup_agreements')->setup($params['cms_locale']);
+            Mage::getModel('magesetup/factory')->agreementsSetup()
+                ->setup($params['cms_locale']);
 
             if ($notify) {
                 $this->_getAdminhtmlSession()->addSuccess(

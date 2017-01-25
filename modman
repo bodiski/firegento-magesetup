@@ -1,4 +1,5 @@
 src/app/code/community/FireGento/MageSetup/                       app/code/community/FireGento/MageSetup/
+src/lib/FireGento/MageSetup/                                      lib/FireGento/MageSetup/
 src/app/etc/modules/FireGento_MageSetup.xml                       app/etc/modules/FireGento_MageSetup.xml
 src/app/locale/de_AT/FireGento_MageSetup.csv                      app/locale/de_AT/FireGento_MageSetup.csv
 src/app/locale/de_CH/template/magesetup/                          app/locale/de_CH/template/magesetup/

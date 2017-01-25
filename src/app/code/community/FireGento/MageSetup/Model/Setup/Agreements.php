@@ -31,6 +31,19 @@
 class FireGento_MageSetup_Model_Setup_Agreements extends FireGento_MageSetup_Model_Setup_Abstract
 {
     /**
+     * @var FireGento_MageSetup_Implementor_StoreConfig
+     */
+    private $storeConfig;
+    /**
+     * @param FireGento_MageSetup_Implementor_StoreConfig $storeConfig
+     */
+    public function __construct(FireGento_MageSetup_Implementor_StoreConfig $storeConfig)
+    {
+        $this->storeConfig = $storeConfig;
+    }
+
+
+    /**
      * Setup Checkout Agreements
      *
      * @param array $locale Locale options
@@ -61,8 +74,7 @@ class FireGento_MageSetup_Model_Setup_Agreements extends FireGento_MageSetup_Mod
         }
 
         // Set config value to true
-        $setup = Mage::getModel('eav/entity_setup', 'core_setup');
-        $setup->setConfigData('checkout/options/enable_agreements', '1');
+        $this->storeConfig->saveDefaultValue('checkout/options/enable_agreements', '1');
     }
 
     /**
