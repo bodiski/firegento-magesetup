@@ -35,11 +35,18 @@ class FireGento_MageSetup_Model_Setup_Agreements extends FireGento_MageSetup_Mod
      */
     private $storeConfig;
     /**
-     * @param FireGento_MageSetup_Implementor_StoreConfig $storeConfig
+     * @var FireGento_MageSetup_Implementor_Directories
      */
-    public function __construct(FireGento_MageSetup_Implementor_StoreConfig $storeConfig)
+    private $directories;
+
+    /**
+     * @param FireGento_MageSetup_Implementor_StoreConfig $storeConfig
+     * @param FireGento_MageSetup_Implementor_Directories $directories
+     */
+    public function __construct(FireGento_MageSetup_Implementor_StoreConfig $storeConfig, FireGento_MageSetup_Implementor_Directories $directories)
     {
         $this->storeConfig = $storeConfig;
+        $this->directories = $directories;
     }
 
 
@@ -92,7 +99,7 @@ class FireGento_MageSetup_Model_Setup_Agreements extends FireGento_MageSetup_Mod
             return;
         }
 
-        $filename = Mage::getBaseDir('locale') . DS . $locale . DS . 'template' . DS . $agreementData['filename'];
+        $filename = $this->directories->localizedTemplates($locale) . $agreementData['filename'];
         if (!file_exists($filename)) {
             return;
         }
