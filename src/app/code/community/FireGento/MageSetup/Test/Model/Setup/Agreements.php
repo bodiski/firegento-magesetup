@@ -17,6 +17,9 @@ class FireGento_MageSetup_Test_Model_Setup_Agreements extends EcomDev_PHPUnit_Te
     }
     protected function tearDown()
     {
+        $setup = Mage::getModel('eav/entity_setup', 'core_setup');
+        $setup->deleteConfigData('checkout/options/enable_agreements');
+
         $agreements = Mage::getResourceModel('checkout/agreement_collection');
         $agreements->addFieldToFilter('agreement_id', ['in' => $this->createdAgreementIds]);
         $agreements->walk('delete');
