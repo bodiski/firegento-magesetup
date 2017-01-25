@@ -5,7 +5,8 @@ class FireGento_MageSetup_Model_Factory
     {
         return new FireGento_MageSetup_Model_Setup_Agreements(
             Mage::getModel('magesetup/bridge_storeConfig'),
-            Mage::getModel('magesetup/bridge_directories')
+            Mage::getModel('magesetup/bridge_directories'),
+            Mage::getModel('magesetup/bridge_agreementRepository')
         );
     }
 

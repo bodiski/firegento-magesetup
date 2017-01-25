@@ -38,15 +38,21 @@ class FireGento_MageSetup_Model_Setup_Agreements extends FireGento_MageSetup_Mod
      * @var FireGento_MageSetup_Implementor_Directories
      */
     private $directories;
+    /**
+     * @var FireGento_MageSetup_Implementor_AgreementRepository
+     */
+    private $agreementRepository;
 
     /**
      * @param FireGento_MageSetup_Implementor_StoreConfig $storeConfig
      * @param FireGento_MageSetup_Implementor_Directories $directories
+     * @param FireGento_MageSetup_Implementor_AgreementRepository $agreementRepository
      */
-    public function __construct(FireGento_MageSetup_Implementor_StoreConfig $storeConfig, FireGento_MageSetup_Implementor_Directories $directories)
+    public function __construct(FireGento_MageSetup_Implementor_StoreConfig $storeConfig, FireGento_MageSetup_Implementor_Directories $directories, FireGento_MageSetup_Implementor_AgreementRepository $agreementRepository)
     {
         $this->storeConfig = $storeConfig;
         $this->directories = $directories;
+        $this->agreementRepository = $agreementRepository;
     }
 
 
@@ -135,14 +141,11 @@ class FireGento_MageSetup_Model_Setup_Agreements extends FireGento_MageSetup_Mod
             'stores'                  => $storeId ? $storeId : 0,
         );
 
-        /* @var $agreement Mage_Checkout_Model_Agreement */
-        $agreement = Mage::getModel('checkout/agreement')->setStoreId($storeId)->load($agreementData['name'], 'name');
-        if (is_array($agreement->getStores()) && !in_array(intval($storeId), $agreement->getStores())) {
-            $agreement = Mage::getModel('checkout/agreement');
-        }
+        $agreement = $this->agreementRepository->load($storeId, $agreementData['name']);
 
-        if (!(int)$agreement->getId() || $override) {
-            $agreement->setData($agreementData)->save();
+        if ($agreement->isNew() || $override) {
+            $agreement->setData($agreementData);
+            $this->agreementRepository->save($agreement);
         }
     }
 
