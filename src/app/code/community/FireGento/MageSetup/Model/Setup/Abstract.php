@@ -28,7 +28,7 @@
  * @package  FireGento_MageSetup
  * @author   FireGento Team <team@firegento.com>
  */
-class FireGento_MageSetup_Model_Setup_Abstract extends Mage_Core_Model_Abstract
+class FireGento_MageSetup_Model_Setup_Abstract extends Varien_Object
 {
     /**
      * @var Mage_Eav_Model_Entity_Setup
@@ -36,17 +36,11 @@ class FireGento_MageSetup_Model_Setup_Abstract extends Mage_Core_Model_Abstract
     protected $_setup;
 
     /**
-     * @var Varien_Db_Adapter_Interface
-     */
-    protected $_connection;
-
-    /**
      * Setup setup class and connection
      */
     public function __construct()
     {
         $this->_setup = Mage::getModel('eav/entity_setup', 'core_setup');
-        $this->_connection = $this->_setup->getConnection();
     }
 
     /**
@@ -126,16 +120,6 @@ class FireGento_MageSetup_Model_Setup_Abstract extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Retrieve the database connection
-     *
-     * @return Varien_Db_Adapter_Interface Database connection
-     */
-    protected function _getConnection()
-    {
-        return $this->_connection;
-    }
-
-    /**
      * Retrieve the Magento setup model class
      *
      * @return Mage_Eav_Model_Entity_Setup Setup Model
@@ -145,17 +129,4 @@ class FireGento_MageSetup_Model_Setup_Abstract extends Mage_Core_Model_Abstract
         return $this->_setup;
     }
 
-    /**
-     * Get setup country ID
-     *
-     * @return string
-     */
-    public function getCountryId()
-    {
-        if (!$this->_getData('country_id')) {
-            $this->setData('country_id', Mage::registry('setup_country'));
-        }
-
-        return $this->_getData('country_id');
-    }
 }

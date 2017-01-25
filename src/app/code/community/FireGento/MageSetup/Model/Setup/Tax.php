@@ -369,4 +369,18 @@ class FireGento_MageSetup_Model_Setup_Tax extends FireGento_MageSetup_Model_Setu
 
         return $this->_getConnection()->lastInsertId($tableName);
     }
+
+    /**
+     * Get setup country ID
+     *
+     * @return string
+     */
+    public function getCountryId()
+    {
+        if (!$this->_getData('country_id')) {
+            $this->setData('country_id', Mage::registry('setup_country'));
+        }
+
+        return $this->_getData('country_id');
+    }
 }
